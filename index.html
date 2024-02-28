@@ -77,38 +77,45 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
+    // buttonElement.disabled = true;
+    // buttonElement.addEventListener("input", (event) => {
+    //   if (event.target.value === "") {
+    //     buttonElement.disabled = true;
+    //   }
+    // });
 
-    let currentDate = new Date();
-    let date = currentDate.getDate();
-    let montch = currentDate.getMonth();
-    let year = currentDate.getFullYear();
-    let hours = currentDate.getHours();
-    let minute = currentDate.getMinutes();
-    if (date < 10) {
-      date = "0" + date;
-    }
-    if (montch < 10) {
-      montch = "0" + montch;
-    }
-    if (year < 10) {
-      year = "0" + year;
-    }
-    if (hours < 10) {
-      hours = "0" + hours;
-    }
-    if (minute < 10) {
-      minute = "0" + minute;
-    }
-
-    let comDate = date + "." + montch + "." + year + " " + hours + ":" + minute;
     buttonElement.addEventListener("click", () => {
+      let currentDate = new Date();
+      let date = currentDate.getDate();
+      let montch = currentDate.getMonth();
+      let year = currentDate.getFullYear();
+      let hours = currentDate.getHours();
+      let minute = currentDate.getMinutes();
+      if (date < 10) {
+        date = "0" + date;
+      }
+      if (montch < 10) {
+        montch = "0" + montch;
+      }
+      if (year < 10) {
+        year = "0" + year;
+      }
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minute < 10) {
+        minute = "0" + minute;
+      }
+
+      let comDate =
+        date + "." + montch + "." + year + " " + hours + ":" + minute;
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
-      if (nameInputElement.value === "") {
+      if (nameInputElement.value.trim() === "") {
         nameInputElement.classList.add("error");
         return;
       }
-      if (commentInputElement.value === "") {
+      if (commentInputElement.value.trim() === "") {
         commentInputElement.classList.add("error");
         return;
       }
