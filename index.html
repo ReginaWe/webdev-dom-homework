@@ -77,12 +77,12 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
-    // buttonElement.disabled = true;
-    // buttonElement.addEventListener("input", (event) => {
-    //   if (event.target.value === "") {
-    //     buttonElement.disabled = true;
-    //   }
-    // });
+    buttonElement.disabled = true;
+    buttonElement.addEventListener("input", (event) => {
+      if (event.target.value === "") {
+        buttonElement.disabled = true;
+      }
+    });
 
     buttonElement.addEventListener("click", () => {
       let currentDate = new Date();
