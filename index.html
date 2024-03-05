@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -39,10 +39,13 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button
+                data-index="${index}"
+                class="like-button -active-like"
+              ></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -77,12 +80,90 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
-    buttonElement.disabled = true;
-    buttonElement.addEventListener("input", (event) => {
-      if (event.target.value === "") {
-        buttonElement.disabled = true;
+
+    // buttonElement.disabled = true;
+    // buttonElement.addEventListener("input", (event) => {
+    //   if (event.target.value === "") {
+    //     buttonElement.disabled = true;
+    //   }
+    //   else {
+    //     buttonElement.disabled = false;
+    //   }
+    // });
+
+    const containerPeople = [
+      {
+        name: "Глеб Фокин",
+        data: "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        count: "3",
+        isLiked: false,
+      },
+      {
+        name: "Варвара Н.",
+        data: "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        count: "75",
+        isLiked: true,
+      },
+    ];
+
+    const initEventListeners = () => {
+      const likeButtonElements = document.querySelectorAll(".like-button");
+      for (const likeButtonElement of likeButtonElements) {
+        likeButtonElement.addEventListener("click", () => {
+          const index = likeButtonElement.dataset.index;
+
+          if (containerPeople[index].isLiked === false) {
+            containerPeople[index].count++;
+            containerPeople[index].isLiked = true;
+          } else {
+            containerPeople[index].count--;
+            containerPeople[index].isLiked = false;
+          }
+
+          renderContainerPeople();
+        });
       }
-    });
+    };
+    const renderContainerPeople = () => {
+      const containerPeopleHtml = containerPeople
+        .map((people, index) => {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${people.name}</div>
+            <div>${people.data}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${people.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${people.count}</span>
+              <button data-index='${index}' class= "like-button ${
+            people.isLiked ? "-active-like" : ""
+          }"></button>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join("");
+
+      // if (containerPeople[index].likeStatus === "like-button") {
+      //   containerPeople[index].likes += 1;
+      //   containerPeople[index].likeStatus === "like-button";
+      // } else {
+      //   containerPeople[index].likes -= 1;
+      //   containerPeople[index].likeStatus === "like-button -active-like";
+      // }
+      listElement.innerHTML = containerPeopleHtml;
+
+      initEventListeners();
+    };
+
+    renderContainerPeople();
 
     buttonElement.addEventListener("click", () => {
       let currentDate = new Date();
@@ -119,26 +200,18 @@
         commentInputElement.classList.add("error");
         return;
       }
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML =
-        oldListHtml +
-        `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${comDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+
+      containerPeople.push({
+        name: nameInputElement.value,
+        data: comDate,
+        comment: commentInputElement.value,
+        count: 0,
+        isLiked: false,
+      });
+
+      renderContainerPeople();
+      initEventListeners();
+
       nameInputElement.value = "";
       commentInputElement.value = "";
     });
