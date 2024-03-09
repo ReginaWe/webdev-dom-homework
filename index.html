@@ -81,15 +81,30 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
 
-    // buttonElement.disabled = true;
-    // buttonElement.addEventListener("input", (event) => {
-    //   if (event.target.value === "") {
-    //     buttonElement.disabled = true;
-    //   }
-    //   else {
-    //     buttonElement.disabled = false;
-    //   }
-    // });
+    // const answerComments = document.querySelectorAll(".comment-text");
+    // for (const answer of answerComments) {
+    //   answer.addEventListener("click", () => {
+    //     alert("1");
+    //   });
+    // }
+    const EnterClick = document.querySelector(".add-form");
+    const redactComment = () => {
+      const buttonRedactComments = document.querySelectorAll(".redact");
+      for (buttonRedactComment of buttonRedactComments) {
+        buttonRedactComment.addEventListener("click", () => {});
+      }
+    };
+
+    buttonElement.disabled = true;
+    const inputValid = (event) => {
+      if (event.target.value === "") {
+        buttonElement.disabled = true;
+      } else {
+        buttonElement.disabled = false;
+      }
+    };
+    nameInputElement.addEventListener("input", inputValid);
+    commentInputElement.addEventListener("input", inputValid);
 
     const containerPeople = [
       {
@@ -98,6 +113,7 @@
         comment: "Это будет первый комментарий на этой странице",
         count: "3",
         isLiked: false,
+        isEdit: false,
       },
       {
         name: "Варвара Н.",
@@ -105,15 +121,16 @@
         comment: "Мне нравится как оформлена эта страница! ❤",
         count: "75",
         isLiked: true,
+        isEdit: false,
       },
     ];
 
     const initEventListeners = () => {
       const likeButtonElements = document.querySelectorAll(".like-button");
       for (const likeButtonElement of likeButtonElements) {
-        likeButtonElement.addEventListener("click", () => {
+        likeButtonElement.addEventListener("click", (event) => {
           const index = likeButtonElement.dataset.index;
-
+          event.stopPropagation();
           if (containerPeople[index].isLiked === false) {
             containerPeople[index].count++;
             containerPeople[index].isLiked = true;
@@ -129,17 +146,22 @@
     const renderContainerPeople = () => {
       const containerPeopleHtml = containerPeople
         .map((people, index) => {
-          return `<li class="comment">
+          return `<li data-index='${index}' class="comment">
           <div class="comment-header">
             <div>${people.name}</div>
             <div>${people.data}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            ${
+              people.isEdit
+                ? "<textarea class='edit-text'></textarea>"
+                : `<div class="comment-text">
               ${people.comment}
-            </div>
+            </div>`
+            }
           </div>
           <div class="comment-footer">
+            <button class="redact">Редактировать</button>
             <div class="likes">
               <span class="likes-counter">${people.count}</span>
               <button data-index='${index}' class= "like-button ${
@@ -151,13 +173,6 @@
         })
         .join("");
 
-      // if (containerPeople[index].likeStatus === "like-button") {
-      //   containerPeople[index].likes += 1;
-      //   containerPeople[index].likeStatus === "like-button";
-      // } else {
-      //   containerPeople[index].likes -= 1;
-      //   containerPeople[index].likeStatus === "like-button -active-like";
-      // }
       listElement.innerHTML = containerPeopleHtml;
 
       initEventListeners();
@@ -165,7 +180,22 @@
 
     renderContainerPeople();
 
-    buttonElement.addEventListener("click", () => {
+    const replyComment = () => {
+      const answerComments = document.querySelectorAll(".comment");
+      for (const answer of answerComments) {
+        answer.addEventListener("click", () => {
+          const index = answer.dataset.index;
+          const commentInputElement = document.getElementById("comment-input");
+          commentInputElement.value =
+            "${people[index].comment} ${people[index].name}";
+
+          initEventListeners();
+        });
+      }
+    };
+    replyComment();
+
+    const addComment = () => {
       let currentDate = new Date();
       let date = currentDate.getDate();
       let montch = currentDate.getMonth() + 1;
@@ -190,6 +220,7 @@
 
       let comDate =
         date + "." + montch + "." + year + " " + hours + ":" + minute;
+
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
       if (nameInputElement.value.trim() === "") {
@@ -207,13 +238,24 @@
         comment: commentInputElement.value,
         count: 0,
         isLiked: false,
+        isEdit: false,
       });
 
       renderContainerPeople();
-      initEventListeners();
+      replyComment();
 
       nameInputElement.value = "";
       commentInputElement.value = "";
+
+      buttonElement.disabled = true;
+    };
+
+    buttonElement.addEventListener("click", addComment);
+
+    EnterClick.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        addComment();
+      }
     });
     console.log("It works!");
   </script>
