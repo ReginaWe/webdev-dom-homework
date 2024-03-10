@@ -186,8 +186,7 @@
         answer.addEventListener("click", () => {
           const index = answer.dataset.index;
           const commentInputElement = document.getElementById("comment-input");
-          commentInputElement.value =
-            "${people[index].comment} ${people[index].name}";
+          commentInputElement.value = `${containerPeople[index].comment} ${containerPeople[index].name}`;
 
           initEventListeners();
         });
@@ -233,9 +232,13 @@
       }
 
       containerPeople.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;"),
         data: comDate,
-        comment: commentInputElement.value,
+        comment: commentInputElement.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;"),
         count: 0,
         isLiked: false,
         isEdit: false,
