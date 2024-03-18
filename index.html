@@ -87,6 +87,23 @@
     //     alert("1");
     //   });
     // }
+    const fetchPromise = fetch(
+      "https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments",
+      {
+        method: "GET",
+      }
+    );
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+
+        containerPeople = responseData.comments;
+        renderContainerPeople();
+      });
+    });
+
     const EnterClick = document.querySelector(".add-form");
     const redactComment = () => {
       const buttonRedactComments = document.querySelectorAll(".redact");
@@ -106,23 +123,23 @@
     nameInputElement.addEventListener("input", inputValid);
     commentInputElement.addEventListener("input", inputValid);
 
-    const containerPeople = [
-      {
-        name: "Глеб Фокин",
-        data: "12.02.22 12:18",
-        comment: "Это будет первый комментарий на этой странице",
-        count: "3",
-        isLiked: false,
-        isEdit: false,
-      },
-      {
-        name: "Варвара Н.",
-        data: "13.02.22 19:22",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        count: "75",
-        isLiked: true,
-        isEdit: false,
-      },
+    let containerPeople = [
+      // {
+      //   name: "Глеб Фокин",
+      //   data: "12.02.22 12:18",
+      //   comment: "Это будет первый комментарий на этой странице",
+      //   count: "3",
+      //   isLiked: false,
+      //   isEdit: false,
+      // },
+      // {
+      //   name: "Варвара Н.",
+      //   data: "13.02.22 19:22",
+      //   comment: "Мне нравится как оформлена эта страница! ❤",
+      //   count: "75",
+      //   isLiked: true,
+      //   isEdit: false,
+      // },
     ];
 
     const initEventListeners = () => {
@@ -251,6 +268,31 @@
       commentInputElement.value = "";
 
       buttonElement.disabled = true;
+
+      fetch("https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: commentInputElement.value,
+          name: nameInputElement.value,
+        }),
+      }).then((response) => {
+        response.json().then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comDate(comment.date),
+              comment: comment.text,
+              count: "0",
+              isLiked: false,
+              isEdit: false,
+            };
+          });
+
+          comments = appComments;
+
+          renderContainerPeople();
+        });
+      });
     };
 
     buttonElement.addEventListener("click", addComment);
