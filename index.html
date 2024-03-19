@@ -248,26 +248,21 @@
         return;
       }
 
-      containerPeople.push({
-        name: nameInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
-        data: comDate,
-        comment: commentInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
-        count: 0,
-        isLiked: false,
-        isEdit: false,
-      });
+      // containerPeople.push({
+      //   name: nameInputElement.value
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;"),
+      //   data: comDate,
+      //   comment: commentInputElement.value
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;"),
+      //   count: 0,
+      //   isLiked: false,
+      //   isEdit: false,
+      // });
 
       renderContainerPeople();
       replyComment();
-
-      nameInputElement.value = "";
-      commentInputElement.value = "";
-
-      buttonElement.disabled = true;
 
       fetch("https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments", {
         method: "POST",
@@ -280,9 +275,9 @@
           const appComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
-              date: comDate(comment.date),
+              data: comDate(comment.date),
               comment: comment.text,
-              count: "0",
+              count: comment.likes,
               isLiked: false,
               isEdit: false,
             };
@@ -293,6 +288,11 @@
           renderContainerPeople();
         });
       });
+
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+
+      buttonElement.disabled = true;
     };
 
     buttonElement.addEventListener("click", addComment);
