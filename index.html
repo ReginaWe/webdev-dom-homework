@@ -166,21 +166,21 @@
           return `<li data-index='${index}' class="comment">
           <div class="comment-header">
             <div>${people.name}</div>
-            <div>${people.data}</div>
+            <div>${people.date}</div>
           </div>
           <div class="comment-body">
             ${
               people.isEdit
                 ? "<textarea class='edit-text'></textarea>"
                 : `<div class="comment-text">
-              ${people.comment}
+              ${people.text}
             </div>`
             }
           </div>
           <div class="comment-footer">
             <button class="redact">Редактировать</button>
             <div class="likes">
-              <span class="likes-counter">${people.count}</span>
+              <span class="likes-counter">${people.likes}</span>
               <button data-index='${index}' class= "like-button ${
             people.isLiked ? "-active-like" : ""
           }"></button>
@@ -189,6 +189,7 @@
         </li>`;
         })
         .join("");
+      console.log(containerPeople);
 
       listElement.innerHTML = containerPeopleHtml;
 
@@ -275,9 +276,9 @@
           const appComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
-              data: comDate(comment.date),
-              comment: comment.text,
-              count: comment.likes,
+              date: comDate(comment.date),
+              text: comment.text,
+              likes: comment.likes,
               isLiked: false,
               isEdit: false,
             };
