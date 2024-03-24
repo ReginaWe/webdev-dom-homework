@@ -87,22 +87,59 @@
     //     alert("1");
     //   });
     // }
-    const fetchPromise = fetch(
-      "https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments",
-      {
-        method: "GET",
+
+    function printDate(value) {
+      let date = value.getDate();
+      let montch = value.getMonth() + 1;
+      let year = value.getFullYear();
+      let hours = value.getHours();
+      let minute = value.getMinutes();
+      if (date < 10) {
+        date = "0" + date;
       }
-    );
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
+      if (montch < 10) {
+        montch = "0" + montch;
+      }
+      if (year < 10) {
+        year = "0" + year;
+      }
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minute < 10) {
+        minute = "0" + minute;
+      }
 
-      jsonPromise.then((responseData) => {
-        console.log(responseData);
+      return date + "." + montch + "." + year + " " + hours + ":" + minute;
+    }
 
-        containerPeople = responseData.comments;
-        renderContainerPeople();
+    function getCommentsFromServer() {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments",
+        {
+          method: "GET",
+        }
+      );
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+          console.log(responseData);
+
+          containerPeople = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: printDate(new Date(comment.date)),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+              isEdit: false,
+            };
+          });
+          renderContainerPeople();
+        });
       });
-    });
+    }
 
     const EnterClick = document.querySelector(".add-form");
     const redactComment = () => {
@@ -159,11 +196,48 @@
           renderContainerPeople();
         });
       }
+
+      document.querySelectorAll(".save-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = button.dataset.index;
+          const current = containerPeople[index];
+          current.isEdit = false;
+
+          const newValue = document.querySelector(
+            `.edit-text[data-index="${index}"]`
+          ).value;
+
+          if (newValue !== current.text) {
+            current.text = newValue;
+          }
+
+          renderContainerPeople();
+        });
+      });
+
+      document.querySelectorAll(".cancel-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = button.dataset.index;
+          containerPeople[index].isEdit = false;
+          renderContainerPeople();
+        });
+      });
+
+      document.querySelectorAll(".edit-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = button.dataset.index;
+          containerPeople[index].isEdit = true;
+          renderContainerPeople();
+        });
+      });
     };
     const renderContainerPeople = () => {
       const containerPeopleHtml = containerPeople
         .map((people, index) => {
-          return `<li data-index='${index}' class="comment">
+          const attrIndex = `data-index="${index}"`;
+          const isActiveLike = `${people.isLiked ? "-active-like" : ""}`;
+
+          return `<li ${attrIndex} class="comment">
           <div class="comment-header">
             <div>${people.name}</div>
             <div>${people.date}</div>
@@ -171,19 +245,22 @@
           <div class="comment-body">
             ${
               people.isEdit
-                ? "<textarea class='edit-text'></textarea>"
+                ? `<textarea class="edit-text" rows="4" ${attrIndex}>${people.text}</textarea>`
                 : `<div class="comment-text">
               ${people.text}
             </div>`
             }
           </div>
           <div class="comment-footer">
-            <button class="redact">Редактировать</button>
+            ${
+              people.isEdit
+                ? `<button class="save-button" ${attrIndex}>Сохранить</button>
+                <button class="cancel-button" ${attrIndex}>Отменить</button>`
+                : `<button class="edit-button" ${attrIndex}>Редактировать</button>`
+            }
             <div class="likes">
               <span class="likes-counter">${people.likes}</span>
-              <button data-index='${index}' class= "like-button ${
-            people.isLiked ? "-active-like" : ""
-          }"></button>
+              <button ${attrIndex} class= "like-button ${isActiveLike}"></button>
             </div>
           </div>
         </li>`;
@@ -196,7 +273,8 @@
       initEventListeners();
     };
 
-    renderContainerPeople();
+    getCommentsFromServer();
+    // renderContainerPeople();
 
     const replyComment = () => {
       const answerComments = document.querySelectorAll(".comment");
@@ -213,30 +291,7 @@
     replyComment();
 
     const addComment = () => {
-      let currentDate = new Date();
-      let date = currentDate.getDate();
-      let montch = currentDate.getMonth() + 1;
-      let year = currentDate.getFullYear();
-      let hours = currentDate.getHours();
-      let minute = currentDate.getMinutes();
-      if (date < 10) {
-        date = "0" + date;
-      }
-      if (montch < 10) {
-        montch = "0" + montch;
-      }
-      if (year < 10) {
-        year = "0" + year;
-      }
-      if (hours < 10) {
-        hours = "0" + hours;
-      }
-      if (minute < 10) {
-        minute = "0" + minute;
-      }
-
-      let comDate =
-        date + "." + montch + "." + year + " " + hours + ":" + minute;
+      let date = printDate(new Date());
 
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
@@ -253,7 +308,7 @@
       //   name: nameInputElement.value
       //     .replaceAll("<", "&lt;")
       //     .replaceAll(">", "&gt;"),
-      //   data: comDate,
+      //   data: date,
       //   comment: commentInputElement.value
       //     .replaceAll("<", "&lt;")
       //     .replaceAll(">", "&gt;"),
@@ -272,22 +327,9 @@
           name: nameInputElement.value,
         }),
       }).then((response) => {
-        response.json().then((responseData) => {
-          const appComments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: comDate(comment.date),
-              text: comment.text,
-              likes: comment.likes,
-              isLiked: false,
-              isEdit: false,
-            };
-          });
+        if (response.status === 400) return "Ошибка";
 
-          comments = appComments;
-
-          renderContainerPeople();
-        });
+        getCommentsFromServer();
       });
 
       nameInputElement.value = "";
