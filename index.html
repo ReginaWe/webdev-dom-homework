@@ -180,16 +180,28 @@
     ];
 
     const initEventListeners = () => {
+      document.querySelectorAll(".comment").forEach((answer) => {
+        answer.addEventListener("click", () => {
+          const index = answer.dataset.index;
+          const commentInputElement = document.getElementById("comment-input");
+          commentInputElement.value = `> ${containerPeople[
+            index
+          ].text.replaceAll("&gt;", ">")}\n\n${containerPeople[index].name}, `;
+
+          //initEventListeners();
+        });
+      });
+
       const likeButtonElements = document.querySelectorAll(".like-button");
       for (const likeButtonElement of likeButtonElements) {
         likeButtonElement.addEventListener("click", (event) => {
           const index = likeButtonElement.dataset.index;
           event.stopPropagation();
           if (containerPeople[index].isLiked === false) {
-            containerPeople[index].count++;
+            containerPeople[index].likes++;
             containerPeople[index].isLiked = true;
           } else {
-            containerPeople[index].count--;
+            containerPeople[index].likes--;
             containerPeople[index].isLiked = false;
           }
 
@@ -276,20 +288,6 @@
     getCommentsFromServer();
     // renderContainerPeople();
 
-    const replyComment = () => {
-      const answerComments = document.querySelectorAll(".comment");
-      for (const answer of answerComments) {
-        answer.addEventListener("click", () => {
-          const index = answer.dataset.index;
-          const commentInputElement = document.getElementById("comment-input");
-          commentInputElement.value = `${containerPeople[index].comment} ${containerPeople[index].name}`;
-
-          initEventListeners();
-        });
-      }
-    };
-    replyComment();
-
     const addComment = () => {
       let date = printDate(new Date());
 
@@ -318,13 +316,17 @@
       // });
 
       renderContainerPeople();
-      replyComment();
+      //replyComment();
 
       fetch("https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments", {
         method: "POST",
         body: JSON.stringify({
-          text: commentInputElement.value,
-          name: nameInputElement.value,
+          text: commentInputElement.value
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;"),
+          name: nameInputElement.value
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;"),
         }),
       }).then((response) => {
         if (response.status === 400) return "Ошибка";
