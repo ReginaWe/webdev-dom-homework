@@ -8,6 +8,7 @@
 
   <body>
     <div class="container">
+      <span id="preloader">Загрузка страницы комментариев...</span>
       <ul id="list" class="comments">
         <!-- <li class="comment">
           <div class="comment-header">
@@ -71,6 +72,9 @@
       .error {
         background-color: red;
       }
+      .hide {
+        display: none;
+      }
     </style>
   </body>
 
@@ -80,6 +84,7 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
+    const preloaderElement = document.getElementById("preloader");
 
     // const answerComments = document.querySelectorAll(".comment-text");
     // for (const answer of answerComments) {
@@ -114,16 +119,13 @@
     }
 
     function getCommentsFromServer() {
-      const fetchPromise = fetch(
-        "https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments",
-        {
-          method: "GET",
-        }
-      );
-      fetchPromise.then((response) => {
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
+      return fetch("https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments", {
+        method: "GET",
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
           console.log(responseData);
 
           containerPeople = responseData.comments.map((comment) => {
@@ -137,8 +139,8 @@
             };
           });
           renderContainerPeople();
+          preloaderElement.classList.add("hide");
         });
-      });
     }
 
     const EnterClick = document.querySelector(".add-form");
@@ -318,6 +320,9 @@
       renderContainerPeople();
       //replyComment();
 
+      buttonElement.disabled = true;
+      buttonElement.textContent = "Комментарий загружается";
+
       fetch("https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -328,11 +333,16 @@
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;"),
         }),
-      }).then((response) => {
-        if (response.status === 400) return "Ошибка";
+      })
+        .then((response) => {
+          if (response.status === 400) return "Ошибка";
 
-        getCommentsFromServer();
-      });
+          return getCommentsFromServer();
+        })
+        .then((data) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Написать";
+        });
 
       nameInputElement.value = "";
       commentInputElement.value = "";
