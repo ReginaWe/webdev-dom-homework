@@ -143,7 +143,7 @@
         });
     }
 
-    const EnterClick = document.querySelector(".add-form");
+    const enterClick = document.querySelector(".add-form");
     const redactComment = () => {
       const buttonRedactComments = document.querySelectorAll(".redact");
       for (buttonRedactComment of buttonRedactComments) {
@@ -238,7 +238,8 @@
       });
 
       document.querySelectorAll(".edit-button").forEach((button) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = button.dataset.index;
           containerPeople[index].isEdit = true;
           renderContainerPeople();
@@ -352,7 +353,7 @@
 
     buttonElement.addEventListener("click", addComment);
 
-    EnterClick.addEventListener("keydown", (event) => {
+    enterClick.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         addComment();
       }
