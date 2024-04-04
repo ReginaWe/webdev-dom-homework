@@ -123,7 +123,9 @@
         method: "GET",
       })
         .then((response) => {
-          return response.json();
+          if (response.status === 200) return response.json();
+
+          if (response.status === 500) alert("Сервер сломался, попробуй позже");
         })
         .then((responseData) => {
           console.log(responseData);
@@ -140,6 +142,9 @@
           });
           renderContainerPeople();
           preloaderElement.classList.add("hide");
+        })
+        .catch((error) => {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
         });
     }
 
@@ -333,20 +338,32 @@
           name: nameInputElement.value
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;"),
+          //forceError: true,
         }),
       })
         .then((response) => {
-          if (response.status === 400) return "Ошибка";
+          if (response.status === 201) return getCommentsFromServer();
 
-          return getCommentsFromServer();
+          if (response.status === 500) alert("Сервер сломался, попробуй позже");
+          if (response.status === 400)
+            alert("Имя и комментарий должны быть не короче 3 символов");
+
+          return "error";
         })
         .then((data) => {
           buttonElement.disabled = false;
           buttonElement.textContent = "Написать";
-        });
 
-      nameInputElement.value = "";
-      commentInputElement.value = "";
+          if (data !== "error") {
+            nameInputElement.value = "";
+            commentInputElement.value = "";
+          }
+        })
+        .catch((error) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Написать";
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+        });
 
       buttonElement.disabled = true;
     };
