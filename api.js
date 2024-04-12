@@ -1,3 +1,5 @@
+import { getCommentsFromServer } from "./main.js";
+
 export function getComments() {
     return fetch("https://wedev-api.sky.pro/api/v1/:regina-kraeva/comments", {
         method: "GET",

@@ -1,8 +1,7 @@
-export const renderContainerPeople = ({
-  containerPeople,
-  listElement,
-  initEventListeners,
-}) => {
+import { initAddCommentListeners, initEventListeners } from "./listeners.js";
+import { listElement } from "./main.js";
+
+export const renderContainerPeople = ({ containerPeople }) => {
   const containerPeopleHtml = containerPeople
     .map((people, index) => {
       const attrIndex = `data-index="${index}"`;
@@ -42,4 +41,5 @@ export const renderContainerPeople = ({
   listElement.innerHTML = containerPeopleHtml;
 
   initEventListeners();
+  initAddCommentListeners();
 };
