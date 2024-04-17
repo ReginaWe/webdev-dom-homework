@@ -1,10 +1,10 @@
 import { getComments, postComment } from "./api.js";
 import { printDate } from "./helpers.js";
+import { renderLogin } from "./loginPage.js";
 import { renderContainerPeople } from "./render.js";
 
 export const listElement = document.getElementById("list");
 const preloaderElement = document.getElementById("preloader");
-
 
 export function getCommentsFromServer() {
   getComments()
@@ -34,6 +34,4 @@ export function getCommentsFromServer() {
 export let containerPeople = [];
 
 getCommentsFromServer();
-
-
-
+renderLogin();

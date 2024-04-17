@@ -121,6 +121,16 @@ body {
   border: none;
 }
 
+.add-form-login,
+.add-form-reg {
+  font-size: 16px;
+  font-family: Helvetica;
+  border-radius: 8px;
+  border: none;
+  margin-top: 12px;
+  padding: 22px;
+}
+
 .add-form-name {
   width: 300px;
   padding: 11px 22px;
@@ -161,4 +171,15 @@ body {
   border-radius: 18px;
   cursor: pointer;
   margin-right: 10px;
+}
+
+.login-button,
+.reg-button {
+  margin-top: 24px;
+  font-size: 24px;
+  padding: 10px 20px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
 }
