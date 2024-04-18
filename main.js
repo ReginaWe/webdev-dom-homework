@@ -1,6 +1,6 @@
 import { getComments, postComment } from "./api.js";
 import { printDate } from "./helpers.js";
-import { renderLogin } from "./loginPage.js";
+import { renderLogin } from "./renderLogin.js";
 import { renderContainerPeople } from "./render.js";
 
 export const listElement = document.getElementById("list");
@@ -33,5 +33,5 @@ export function getCommentsFromServer() {
 
 export let containerPeople = [];
 
-getCommentsFromServer();
-renderLogin();
+// getCommentsFromServer();
+renderLogin({ getCommentsFromServer });

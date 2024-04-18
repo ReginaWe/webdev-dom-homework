@@ -2,6 +2,7 @@ import { initAddCommentListeners, initEventListeners } from "./listeners.js";
 import { listElement } from "./main.js";
 
 export const renderContainerPeople = ({ containerPeople }) => {
+  const appElement = document.getElementById("app");
   const containerPeopleHtml = containerPeople
     .map((people, index) => {
       const attrIndex = `data-index="${index}"`;
@@ -36,9 +37,37 @@ export const renderContainerPeople = ({ containerPeople }) => {
           </li>`;
     })
     .join("");
+
+  const appHtml = `
+  <div class="container">
+  <span id="preloader">Загрузка страницы комментариев...</span>
+  <ul id="list" class="comments">${containerPeopleHtml}</ul>
+  <div class="add-form">
+    <input
+      type="text"
+      id="name-input"
+      value=""
+      class="add-form-name"
+      placeholder="Введите ваше имя"
+    />
+    <textarea
+      type="textarea"
+      id="comment-input"
+      class="add-form-text"
+      placeholder="Введите ваш коментарий"
+      rows="4"
+    ></textarea>
+    <div class="add-form-row">
+      <button id="add-button" disabled class="add-form-button">
+        Написать
+      </button>
+    </div>
+    <a href="login.html">перейти</a>
+  </div>
+</div>`;
   console.log(containerPeople);
 
-  listElement.innerHTML = containerPeopleHtml;
+  appElement.innerHTML = appHtml;
 
   initEventListeners();
   initAddCommentListeners();

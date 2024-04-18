@@ -1,6 +1,6 @@
 import { login, setToken, token } from "./api.js";
 
-export const renderLogin = () => {
+export const renderLogin = ({ getCommentsFromServer }) => {
   const appElement = document.getElementById("app");
   const loginHtml = `
   <div class="container">
@@ -40,10 +40,14 @@ export const renderLogin = () => {
         .trim()
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;"),
-    }).then((responseData) => {
-      console.log(token);
-      setToken(responseData.user.token);
-      console.log(token);
-    });
+    })
+      .then((responseData) => {
+        console.log(token);
+        setToken(responseData.user.token);
+        console.log(token);
+      })
+      .then(() => {
+        getCommentsFromServer();
+      });
   });
 };
