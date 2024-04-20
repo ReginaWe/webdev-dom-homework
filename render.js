@@ -1,3 +1,4 @@
+import { token, userName } from "./api.js";
 import { initAddCommentListeners, initEventListeners } from "./listeners.js";
 import { listElement } from "./main.js";
 
@@ -38,33 +39,39 @@ export const renderContainerPeople = ({ containerPeople }) => {
     })
     .join("");
 
+  let bottomContent;
+
+  if (token)
+    bottomContent = `<div class="add-form">
+        <input
+          type="text"
+          id="name-input"
+          value="${userName}"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          disabled
+        />
+        <textarea
+          type="textarea"
+          id="comment-input"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-button" disabled class="add-form-button">
+            Написать
+          </button>
+        </div>
+      </div>`;
+  else
+    bottomContent = `<p class="preloader"><a class=""sign-user href="#" id="sign-user">Авторизуйтесь</a>, чтобы отправить комментарий.</p>`;
+
   const appHtml = `
   <div class="container">
-  <span id="preloader">Загрузка страницы комментариев...</span>
-  <ul id="list" class="comments">${containerPeopleHtml}</ul>
-  <div class="add-form">
-    <input
-      type="text"
-      id="name-input"
-      value=""
-      class="add-form-name"
-      placeholder="Введите ваше имя"
-    />
-    <textarea
-      type="textarea"
-      id="comment-input"
-      class="add-form-text"
-      placeholder="Введите ваш коментарий"
-      rows="4"
-    ></textarea>
-    <div class="add-form-row">
-      <button id="add-button" disabled class="add-form-button">
-        Написать
-      </button>
-    </div>
-    <a href="login.html">перейти</a>
-  </div>
-</div>`;
+    <ul id="list" class="comments">${containerPeopleHtml}</ul>
+    ${bottomContent}
+  </div>`;
   console.log(containerPeople);
 
   appElement.innerHTML = appHtml;

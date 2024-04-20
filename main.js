@@ -7,6 +7,8 @@ export const listElement = document.getElementById("list");
 const preloaderElement = document.getElementById("preloader");
 
 export function getCommentsFromServer() {
+  preloaderElement.classList.remove("hide");
+
   getComments()
     .then((responseData) => {
       console.log(responseData);
@@ -27,11 +29,15 @@ export function getCommentsFromServer() {
       preloaderElement.classList.add("hide");
     })
     .catch((error) => {
-      alert("Кажется, у вас сломался интернет, попробуйте позже");
+      if (error === "Failed to fetch")
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+      else
+        throw error
     });
 }
+// getLogin();
 
 export let containerPeople = [];
 
-// getCommentsFromServer();
-renderLogin({ getCommentsFromServer });
+getCommentsFromServer();
+// renderLogin({ getCommentsFromServer });

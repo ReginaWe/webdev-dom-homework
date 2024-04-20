@@ -1,6 +1,7 @@
-import { postComment } from "./api.js";
-import { containerPeople } from "./main.js";
+import { postComment, token } from "./api.js";
+import { containerPeople, getCommentsFromServer } from "./main.js";
 import { renderContainerPeople } from "./render.js";
+import { renderLogin } from "./renderLogin.js";
 
 function replayComment() {
   document.querySelectorAll(".comment").forEach((answer) => {
@@ -99,6 +100,11 @@ export const initEventListeners = () => {
 };
 
 export function initAddCommentListeners() {
+  if (!token) {
+    document.getElementById("sign-user").addEventListener("click", () => renderLogin({ getCommentsFromServer }))
+    return
+  }
+
   const buttonElement = document.getElementById("add-button");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
@@ -152,7 +158,7 @@ export function initAddCommentListeners() {
 
   nameInputElement.addEventListener("input", inputValid);
   commentInputElement.addEventListener("input", inputValid);
-
+  
   buttonElement.addEventListener("click", addComment);
   addCommentByEnter();
 }
