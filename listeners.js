@@ -101,8 +101,10 @@ export const initEventListeners = () => {
 
 export function initAddCommentListeners() {
   if (!token) {
-    document.getElementById("sign-user").addEventListener("click", () => renderLogin({ getCommentsFromServer }))
-    return
+    document
+      .getElementById("sign-user")
+      .addEventListener("click", () => renderLogin({ getCommentsFromServer }));
+    return;
   }
 
   const buttonElement = document.getElementById("add-button");
@@ -158,7 +160,7 @@ export function initAddCommentListeners() {
 
   nameInputElement.addEventListener("input", inputValid);
   commentInputElement.addEventListener("input", inputValid);
-  
+
   buttonElement.addEventListener("click", addComment);
   addCommentByEnter();
 }
